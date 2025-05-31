@@ -1,7 +1,7 @@
 import { useState } from 'react';
 // import { FiMail, FiMessageSquare, FiSend, FiCheckCircle, FiAlertCircle, FiLoader } from 'react-icons/fi';
 
-export default function Contact() {
+export default function ContactForms() {
   const [email, setEmail] = useState('');
   const [noReply, setNoReply] = useState(false);
   const [message, setMessage] = useState('');
