@@ -1,4 +1,5 @@
 import { useState } from 'react';
+// import { FiMail, FiMessageSquare, FiSend, FiCheckCircle, FiAlertCircle, FiLoader } from 'react-icons/fi';
 
 export default function Contact() {
   const [email, setEmail] = useState('');
@@ -6,22 +7,30 @@ export default function Contact() {
   const [message, setMessage] = useState('');
   const [status, setStatus] = useState('');
   const [isError, setIsError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // 送信中の状態を追加
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true); // 送信開始
+    setStatus(''); // ステータスをリセット
+    setIsError(false); // エラー状態をリセット
+
     if (!noReply && !email.trim()) {
       setStatus('メールアドレスを入力してください。');
       setIsError(true);
+      setIsLoading(false);
       return;
     }
     if (message.trim().length === 0) {
       setStatus('お問い合わせ内容を入力してください。');
       setIsError(true);
+      setIsLoading(false);
       return;
     }
     if (message.length > 100) {
       setStatus('お問い合わせ内容は100文字以内にしてください。');
       setIsError(true);
+      setIsLoading(false);
       return;
     }
 
@@ -43,108 +52,97 @@ export default function Contact() {
         setStatus(data.message || '送信中にエラーが発生しました。');
         setIsError(true);
       }
-    } catch {
+    } catch (error) {
+      console.error('Fetch error:', error);
       setStatus('通信エラーが発生しました。');
       setIsError(true);
+    } finally {
+      setIsLoading(false); // 送信終了
     }
   };
 
   return (
-    <main style={{ maxWidth: '600px', margin: '2rem auto', padding: '1rem' }}>
-      <h1 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>お問い合わせフォーム</h1>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-        <label style={{ display: 'flex', flexDirection: 'column', fontWeight: '600', fontSize: '1rem' }}>
-          メールアドレス（返信を希望しない場合は不要）
+    <main className="max-w-md mx-auto my-8 p-6 bg-white shadow-lg rounded-lg animate-fade-in">
+      <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">お問い合わせフォーム</h1>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        {/* メールアドレス入力欄 */}
+        <div className="relative">
+          <label htmlFor="email" className="block text-gray-700 font-semibold mb-1">
+            メールアドレス（返信不要な場合は不要）
+          </label>
+          {/* <FiMail className="absolute left-3 top-10 text-gray-400" /> */}
           <input
             type="email"
+            id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={noReply}
             placeholder="example@mail.com"
-            style={{
-              width: '100%',
-              padding: '0.6rem 0.8rem',
-              marginTop: '0.3rem',
-              borderRadius: '6px',
-              border: '1.5px solid #ccc',
-              fontSize: '1rem',
-              outline: 'none',
-              backgroundColor: noReply ? '#f5f5f5' : 'white',
-              transition: 'border-color 0.2s',
-            }}
-            onFocus={(e) => (e.target.style.borderColor = '#0070f3')}
-            onBlur={(e) => (e.target.style.borderColor = '#ccc')}
+            className={`w-full px-4 py-2 pl-4 border ${isError && !noReply && !email.trim() ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 ease-in-out ${noReply ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'}`}
           />
-        </label>
+        </div>
 
-        <label style={{ display: 'flex', alignItems: 'center', fontSize: '0.95rem', gap: '0.5rem', cursor: 'pointer' }}>
+        {/* 返信を希望しないチェックボックス */}
+        <label htmlFor="noReply" className="flex items-center text-gray-600 cursor-pointer select-none">
           <input
             type="checkbox"
+            id="noReply"
             checked={noReply}
             onChange={(e) => setNoReply(e.target.checked)}
-            style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+            className="form-checkbox h-5 w-5 text-blue-600 rounded-md focus:ring-blue-500 transition-all duration-200 ease-in-out"
           />
-          返信を希望しない
+          <span className="ml-2">返信を希望しない</span>
         </label>
 
-        <label style={{ display: 'flex', flexDirection: 'column', fontWeight: '600', fontSize: '1rem' }}>
-          お問い合わせ内容（100文字まで）
+        {/* お問い合わせ内容入力欄 */}
+        <div className="relative">
+          <label htmlFor="message" className="block text-gray-700 font-semibold mb-1">
+            お問い合わせ内容（100文字まで）
+          </label>
+          {/* <FiMessageSquare className="absolute left-3 top-10 text-gray-400" /> */}
           <textarea
+            id="message"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             maxLength={100}
             required
             placeholder="ここにご質問・ご要望を入力してください"
-            style={{
-              width: '100%',
-              padding: '0.6rem 0.8rem',
-              marginTop: '0.3rem',
-              height: '110px',
-              borderRadius: '6px',
-              border: '1.5px solid #ccc',
-              fontSize: '1rem',
-              resize: 'vertical',
-              outline: 'none',
-              transition: 'border-color 0.2s',
-            }}
-            onFocus={(e) => (e.target.style.borderColor = '#0070f3')}
-            onBlur={(e) => (e.target.style.borderColor = '#ccc')}
-          />
-        </label>
+            className={`w-full px-4 py-2 pl-4 h-32 border ${isError && message.trim().length === 0 ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 ease-in-out resize-y`}
+          ></textarea>
+          <div className="text-sm text-gray-500 mt-1 text-right">
+            {message.length} / 100
+          </div>
+        </div>
 
+        {/* 送信ボタン */}
         <button
           type="submit"
-          style={{
-            padding: '0.8rem',
-            backgroundColor: '#0070f3',
-            color: '#fff',
-            fontWeight: '700',
-            fontSize: '1.1rem',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            boxShadow: '0 4px 12px rgba(0, 112, 243, 0.5)',
-            transition: 'background-color 0.3s ease',
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#005bb5')}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#0070f3')}
+          className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 ease-in-out disabled:opacity-60 disabled:cursor-not-allowed"
+          disabled={isLoading} // 送信中はボタンを無効化
         >
-          送信
+          {isLoading ? (
+            <>
+              {/* <FiLoader className="animate-spin" /> */}
+              <span>送信中...</span>
+            </>
+          ) : (
+            <>
+              {/* <FiSend /> */}
+              <span>送信</span>
+            </>
+          )}
         </button>
 
+        {/* ステータスメッセージ */}
         {status && (
-          <p
-            style={{
-              marginTop: '1rem',
-              padding: '0.7rem 1rem',
-              borderRadius: '6px',
-              backgroundColor: isError ? '#ffe5e5' : '#e5ffe5',
-              color: isError ? '#d32f2f' : '#2e7d32',
-              fontWeight: '600',
-              textAlign: 'center',
-              userSelect: 'none',
-            }}
-          >
+          <p className={`mt-4 p-4 rounded-lg flex items-center gap-2 animate-fade-in ${isError ? 'bg-red-100 text-red-700 border border-red-300' : 'bg-green-100 text-green-700 border border-green-300'}`}>
+            {isError ? (
+              // <FiAlertCircle className="text-xl" />
+              <span>⚠️</span> // アイコンの代替
+            ) : (
+              // <FiCheckCircle className="text-xl" />
+              <span>✅</span> // アイコンの代替
+            )}
             {status}
           </p>
         )}
@@ -152,3 +150,4 @@ export default function Contact() {
     </main>
   );
 }
+
