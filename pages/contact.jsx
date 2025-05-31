@@ -1,7 +1,8 @@
 import { useState } from 'react';
+// アイコンライブラリを使用する場合は、以下を有効にしてください。
 // import { FiMail, FiMessageSquare, FiSend, FiCheckCircle, FiAlertCircle, FiLoader } from 'react-icons/fi';
 
-export default function ContactForms() {
+export default function Contact() {
   const [email, setEmail] = useState('');
   const [noReply, setNoReply] = useState(false);
   const [message, setMessage] = useState('');
