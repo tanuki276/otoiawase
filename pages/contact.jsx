@@ -1,6 +1,12 @@
 import { useState } from 'react';
-// アイコンライブラリを使用する場合は、以下を有効にしてください。
-// import { FiMail, FiMessageSquare, FiSend, FiCheckCircle, FiAlertCircle, FiLoader } from 'react-icons/fi';
+import {
+  FiMail,
+  FiMessageSquare,
+  FiSend,
+  FiCheckCircle,
+  FiAlertCircle,
+  FiLoader,
+} from 'react-icons/fi';
 
 export default function Contact() {
   const [email, setEmail] = useState('');
@@ -63,80 +69,90 @@ export default function Contact() {
   };
 
   return (
-    <main className="max-w-md mx-auto my-8 p-6 bg-white shadow-lg rounded-lg animate-fade-in">
-      <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">お問い合わせフォーム</h1>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-        <div className="relative">
-          <label htmlFor="email" className="block text-gray-700 font-semibold mb-1">
-            メールアドレス（返信不要な場合は不要）
-          </label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            disabled={noReply}
-            placeholder="example@mail.com"
-            className={`w-full px-4 py-2 pl-4 border ${isError && !noReply && !email.trim() ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 ease-in-out ${noReply ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'}`}
-          />
-        </div>
-
-        <label htmlFor="noReply" className="flex items-center text-gray-600 cursor-pointer select-none">
-          <input
-            type="checkbox"
-            id="noReply"
-            checked={noReply}
-            onChange={(e) => setNoReply(e.target.checked)}
-            className="form-checkbox h-5 w-5 text-blue-600 rounded-md focus:ring-blue-500 transition-all duration-200 ease-in-out"
-          />
-          <span className="ml-2">返信を希望しない</span>
-        </label>
-
-        <div className="relative">
-          <label htmlFor="message" className="block text-gray-700 font-semibold mb-1">
-            お問い合わせ内容（100文字まで）
-          </label>
-          <textarea
-            id="message"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            maxLength={100}
-            required
-            placeholder="ここにご質問・ご要望を入力してください"
-            className={`w-full px-4 py-2 pl-4 h-32 border ${isError && message.trim().length === 0 ? 'border-red-500' : 'border-gray-300'} rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 ease-in-out resize-y`}
-          ></textarea>
-          <div className="text-sm text-gray-500 mt-1 text-right">
-            {message.length} / 100
+    <main className="min-h-screen bg-zinc-900 text-white flex items-center justify-center p-6">
+      <div className="max-w-md w-full bg-zinc-800 p-8 rounded-2xl shadow-2xl border border-zinc-700 animate-fade-in">
+        <h1 className="text-3xl font-bold text-center mb-6">お問い合わせフォーム</h1>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium mb-2">
+              <span className="inline-flex items-center gap-1">
+                <FiMail />
+                メールアドレス（返信不要な場合は不要）
+              </span>
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={noReply}
+              placeholder="example@mail.com"
+              className={`w-full px-4 py-2 rounded-lg bg-zinc-700 text-white placeholder-gray-400 border ${isError && !noReply && !email.trim() ? 'border-red-500' : 'border-zinc-600'} focus:outline-none focus:ring-2 focus:ring-blue-500 transition`}
+            />
           </div>
-        </div>
 
-        <button
-          type="submit"
-          className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 ease-in-out disabled:opacity-60 disabled:cursor-not-allowed"
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <>
-              <span>送信中...</span>
-            </>
-          ) : (
-            <>
-              <span>送信</span>
-            </>
-          )}
-        </button>
+          <label htmlFor="noReply" className="flex items-center text-sm gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              id="noReply"
+              checked={noReply}
+              onChange={(e) => setNoReply(e.target.checked)}
+              className="h-5 w-5 text-blue-600 bg-zinc-800 border border-zinc-500 rounded focus:ring-blue-500"
+            />
+            返信を希望しない
+          </label>
 
-        {status && (
-          <p className={`mt-4 p-4 rounded-lg flex items-center gap-2 animate-fade-in ${isError ? 'bg-red-100 text-red-700 border border-red-300' : 'bg-green-100 text-green-700 border border-green-300'}`}>
-            {isError ? (
-              <span>⚠️</span>
+          <div>
+            <label htmlFor="message" className="block text-sm font-medium mb-2">
+              <span className="inline-flex items-center gap-1">
+                <FiMessageSquare />
+                お問い合わせ内容（100文字まで）
+              </span>
+            </label>
+            <textarea
+              id="message"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              maxLength={100}
+              required
+              placeholder="ご質問やご要望などをご記入ください"
+              className={`w-full px-4 py-3 rounded-lg bg-zinc-700 text-white placeholder-gray-400 border ${isError && message.trim().length === 0 ? 'border-red-500' : 'border-zinc-600'} focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y transition`}
+            ></textarea>
+            <div className="text-right text-xs text-gray-400 mt-1">{message.length} / 100</div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:opacity-50 transition text-white font-semibold shadow-md"
+          >
+            {isLoading ? (
+              <>
+                <FiLoader className="animate-spin" />
+                送信中...
+              </>
             ) : (
-              <span>✅</span>
+              <>
+                <FiSend />
+                送信
+              </>
             )}
-            {status}
-          </p>
-        )}
-      </form>
+          </button>
+
+          {status && (
+            <p
+              className={`mt-2 p-4 rounded-lg flex items-center gap-2 text-sm font-medium border ${
+                isError
+                  ? 'bg-red-100 text-red-700 border-red-300'
+                  : 'bg-emerald-100 text-emerald-700 border-emerald-300'
+              }`}
+            >
+              {isError ? <FiAlertCircle /> : <FiCheckCircle />}
+              {status}
+            </p>
+          )}
+        </form>
+      </div>
     </main>
   );
 }
